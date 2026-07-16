@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CampusSamiksha — Honest reviews of Indian academic employers</title>
+<meta name="description" content="A Glassdoor-style platform where faculty, non-teaching staff and research scholars anonymously review India's universities, colleges and research institutes." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#f6f5f2; --card:#fff; --ink:#1b2138; --ink-2:#3a4160; --muted:#6b7191;
+    --line:#e6e4dd; --line-2:#efeee9; --marigold:#e0990a; --marigold-2:#b87a00;
+    --verify:#0e7a5f; --verify-bg:#e6f2ed; --bad:#b23a2e; --hero:#1b2138; --hero-2:#232b48;
+    --serif:'IBM Plex Serif',Georgia,serif; --sans:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;line-height:1.15;margin:0}
+  a{color:var(--ink);text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+  .eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .muted{color:var(--muted)}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-weight:500;font-size:14px;padding:12px 20px;border-radius:10px;border:1px solid var(--ink);transition:transform .12s,background .12s}
+  .btn:hover{background:#262e4d;color:#fff;transform:translateY(-1px)}
+  .btn.gold{background:var(--marigold);border-color:var(--marigold);color:#241a00;font-weight:600}
+  .btn.gold:hover{background:#f0a716;border-color:#f0a716;color:#241a00}
+  .btn.ghost{background:#fff;color:var(--ink);border-color:var(--line)}
+  .btn.ghost:hover{background:#fff;color:var(--marigold-2);border-color:var(--marigold)}
+
+  header.top{position:sticky;top:0;z-index:20;background:rgba(246,245,242,.85);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+  header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:14px}
+  .brand{font-family:var(--serif);font-weight:600;font-size:21px;display:inline-flex;align-items:baseline;gap:8px}
+  .brand b{position:relative}
+  .brand b::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:var(--marigold);border-radius:2px}
+  .brand .deva{font-family:var(--sans);font-size:12px;color:var(--muted)}
+  nav.links{display:flex;gap:18px;align-items:center;font-size:14px}
+  nav.links a{color:var(--ink-2)} nav.links a:hover{color:var(--marigold-2)}
+  @media(max-width:640px){nav.links a:not(.btn){display:none}}
+
+  .hero{background:radial-gradient(120% 140% at 85% -10%,rgba(224,153,10,.22),transparent 55%),linear-gradient(180deg,var(--hero-2),var(--hero));color:#f4f4f7;border-radius:20px;padding:56px 44px;margin:26px 0 20px;position:relative;overflow:hidden}
+  .hero::after{content:"समीक्षा";position:absolute;right:26px;bottom:-24px;font-family:var(--serif);font-size:140px;color:rgba(255,255,255,.05);line-height:1;pointer-events:none}
+  .hero .eyebrow{color:rgba(255,255,255,.6)}
+  .hero h1{color:#fff;font-size:clamp(32px,5.2vw,50px);max-width:15ch;margin:14px 0 12px}
+  .hero h1 em{font-style:normal;color:var(--marigold)}
+  .hero p{color:rgba(255,255,255,.74);max-width:54ch;font-size:16.5px;margin:0 0 26px}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .stats{display:flex;gap:32px;margin-top:34px;flex-wrap:wrap}
+  .stats .n{font-family:var(--mono);font-size:24px;color:#fff;font-weight:500}
+  .stats .l{font-size:12px;color:rgba(255,255,255,.6)}
+  .preview-note{font-size:12.5px;color:rgba(255,255,255,.55);margin-top:18px;max-width:56ch}
+
+  section{padding:34px 0}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:20px}
+  .sec-head h2{font-size:26px}
+
+  /* Signature: mark-sheet scorecard */
+  .board{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:stretch}
+  @media(max-width:760px){.board{grid-template-columns:1fr}}
+  .scorecard{background:linear-gradient(180deg,#fff,#fcfbf8);border:1px solid var(--line);border-radius:16px;padding:24px}
+  .scorecard .name{font-family:var(--serif);font-size:20px;font-weight:600}
+  .scorecard .loc{color:var(--muted);font-size:13px;margin-top:2px}
+  .figure{display:flex;align-items:center;gap:18px;margin:16px 0 18px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+  .figure .num{font-family:var(--serif);font-size:52px;font-weight:600;line-height:1}
+  .figure .stars{color:var(--marigold);letter-spacing:2px;font-size:16px}
+  .figure .den{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .figure .rec{font-size:13px} .figure .rec b{color:var(--verify)}
+  .mrow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .mrow:last-child{border:none}
+  .rval{display:inline-flex;align-items:center;gap:10px}
+  .meter{position:relative;height:6px;width:120px;border-radius:999px;background:var(--line-2);overflow:hidden}
+  .meter>span{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--marigold),var(--marigold-2));border-radius:999px}
+  .rnum{font-family:var(--mono);font-size:13px;color:var(--ink-2);min-width:26px;text-align:right}
+  .aside{display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .aside .lead{font-family:var(--serif);font-size:22px}
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--verify-bg);color:var(--verify)}
+  .badge::before{content:"✓";font-weight:700}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .feature{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .feature h3{font-size:16px;margin-bottom:6px}
+  .feature p{margin:0;font-size:14px;color:var(--ink-2)}
+  .feature .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--marigold-2)}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s}
+  @media(max-width:760px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative}
+  .step .no{font-family:var(--mono);color:var(--marigold-2);font-size:13px;font-weight:500}
+  .step h3{font-size:16px;margin:6px 0}
+  .step p{margin:0;font-size:14px;color:var(--ink-2)}
+
+  .strip{background:var(--ink);color:#eef;border-radius:16px;padding:26px 28px;display:flex;gap:26px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  .strip .t{font-family:var(--serif);font-size:20px;color:#fff}
+  .strip p{margin:4px 0 0;color:rgba(255,255,255,.65);font-size:14px;max-width:46ch}
+
+  footer{border-top:1px solid var(--line);background:#fff;margin-top:20px}
+  footer .wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:center;padding:26px 22px;font-size:13px}
+  footer a{color:var(--muted)} footer a:hover{color:var(--marigold-2)}
+  footer .fbrand{font-family:var(--serif);font-weight:600;color:var(--ink)}
+  .pill{display:inline-flex;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);border:1px solid var(--line);background:#fff;padding:3px 9px;border-radius:999px;margin-right:6px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">Campus<b>Samiksha</b> <span class="deva">समीक्षा</span></a>
+    <nav class="links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="https://github.com/campussamiksha/campussamiksha">GitHub</a>
+      <a class="btn gold" href="https://vercel.com/new/clone?repository-url=https://github.com/campussamiksha/campussamiksha&env=DATABASE_URL,SESSION_SECRET,APP_URL,MAIL_TRANSPORT">Deploy the app</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+  <section class="hero">
+    <span class="eyebrow">Reviews by faculty · staff · scholars</span>
+    <h1>Know your <em>employer</em> before you join.</h1>
+    <p>Honest, anonymous reviews of India's universities, colleges and research institutes — pay, workload, management and research freedom, from the people who actually worked there.</p>
+    <div class="cta-row">
+      <a class="btn gold" href="https://vercel.com/new/clone?repository-url=https://github.com/campussamiksha/campussamiksha&env=DATABASE_URL,SESSION_SECRET,APP_URL,MAIL_TRANSPORT">Deploy the live app →</a>
+      <a class="btn ghost" href="https://github.com/campussamiksha/campussamiksha">View the source</a>
+    </div>
+    <div class="stats">
+      <div><div class="n">13,000+</div><div class="l">institutions listed</div></div>
+      <div><div class="n">36</div><div class="l">states &amp; UTs</div></div>
+      <div><div class="n">3</div><div class="l">reviewer roles covered</div></div>
+    </div>
+    <p class="preview-note">This is a preview of the product. The full interactive app — reviews, search, salary data, moderation — runs on Node + PostgreSQL and deploys free to Vercel in one click.</p>
+  </section>
+
+  <section id="signature">
+    <div class="sec-head"><h2>Ratings, read like a mark-sheet</h2><span class="eyebrow">illustrative</span></div>
+    <div class="board">
+      <div class="scorecard">
+        <div class="name">Indian Institute of Technology Bombay</div>
+        <div class="loc">Mumbai, Maharashtra</div>
+        <div class="figure">
+          <div>
+            <div class="num">4.1</div>
+            <div class="stars">★★★★☆</div>
+            <div class="den">out of 5</div>
+          </div>
+          <div class="rec"><b>82%</b> would recommend<br /><span class="muted" style="font-size:13px">across faculty, staff &amp; scholars</span></div>
+        </div>
+        <div class="mrow"><span>Research support &amp; freedom</span><span class="rval"><span class="meter"><span style="width:88%"></span></span><span class="rnum">4.4</span></span></div>
+        <div class="mrow"><span>Compensation &amp; benefits</span><span class="rval"><span class="meter"><span style="width:76%"></span></span><span class="rnum">3.8</span></span></div>
+        <div class="mrow"><span>Management &amp; administration</span><span class="rval"><span class="meter"><span style="width:70%"></span></span><span class="rnum">3.5</span></span></div>
+        <div class="mrow"><span>Work–life balance</span><span class="rval"><span class="meter"><span style="width:64%"></span></span><span class="rnum">3.2</span></span></div>
+      </div>
+      <div class="aside">
+        <span class="badge">Verified employee</span>
+        <div class="lead">Every institution scored on what actually matters to its people.</div>
+        <p class="muted" style="margin:0;font-size:14px">Teaching faculty, non-teaching staff and research scholars each rate the parameters relevant to <em>their</em> role — from salary punctuality and academic freedom to stipend adequacy and guide quality — aggregated into one honest picture.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="sec-head"><h2>What it does</h2></div>
+    <div class="grid">
+      <div class="feature"><div class="k">Reviews</div><h3>Role-aware ratings</h3><p>Faculty, staff and scholars answer the parameters that fit their role — no one-size-fits-all form.</p></div>
+      <div class="feature"><div class="k">Trust</div><h3>Anonymous &amp; verified</h3><p>Identity is never shown to employers. Upload proof once for a “Verified employee” badge — the document is deleted after review.</p></div>
+      <div class="feature"><div class="k">Pay</div><h3>Salary explorer</h3><p>Structured, anonymous pay data with medians and a salary-punctuality signal — the thing candidates most want to know.</p></div>
+      <div class="feature"><div class="k">Hiring</div><h3>Interview experiences</h3><p>What the process and questions were really like, so the next candidate walks in prepared.</p></div>
+      <div class="feature"><div class="k">Fairness</div><h3>Claim &amp; right of reply</h3><p>Institutions can verify their profile and post one official response per review — reply, never edit or hide.</p></div>
+      <div class="feature"><div class="k">Integrity</div><h3>Moderation &amp; anti-defamation</h3><p>Every submission is reviewed; content names roles, not individuals. Report &amp; takedown built in.</p></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="sec-head"><h2>How it works</h2></div>
+    <div class="steps">
+      <div class="step"><div class="no">Step 01</div><h3>Share your experience</h3><p>Sign up, verify your email, and review an institution you worked at — pros, cons, and role-specific ratings.</p></div>
+      <div class="step"><div class="no">Step 02</div><h3>A moderator checks it</h3><p>Submissions are held until reviewed for authenticity and to keep them fair and lawful.</p></div>
+      <div class="step"><div class="no">Step 03</div><h3>It goes live</h3><p>Approved reviews publish and recalculate the institution's scores — helping the next person decide.</p></div>
+    </div>
+  </section>
+
+  <section id="coverage">
+    <div class="strip">
+      <div>
+        <div class="t">A national directory, ready on day one</div>
+        <p>Seeded with 13,000+ AICTE-approved institutions across every state and union territory — searchable by name, acronym, city or state.</p>
+      </div>
+      <div>
+        <span class="pill">Anonymity by design</span>
+        <span class="pill">IT Rules 2021</span>
+        <span class="pill">DPDP Act 2023</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="deploy" style="text-align:center;padding-bottom:10px">
+    <h2 style="font-size:28px;margin-bottom:10px">Put it live in one click</h2>
+    <p class="muted" style="max-width:52ch;margin:0 auto 22px">Deploy the full app to Vercel with a free Neon Postgres, or explore the code first.</p>
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn gold" href="https://vercel.com/new/clone?repository-url=https://github.com/campussamiksha/campussamiksha&env=DATABASE_URL,SESSION_SECRET,APP_URL,MAIL_TRANSPORT">Deploy with Vercel →</a>
+      <a class="btn ghost" href="https://github.com/campussamiksha/campussamiksha">Read the README</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="fbrand">CampusSamiksha</span>
+    <span class="muted">© 2026</span>
+    <a href="https://github.com/campussamiksha/campussamiksha">Source</a>
+    <a href="https://github.com/campussamiksha/campussamiksha/blob/main/app/terms/page.tsx">Terms</a>
+    <a href="https://github.com/campussamiksha/campussamiksha/blob/main/app/privacy/page.tsx">Privacy</a>
+    <span class="muted" style="margin-left:auto">Built as an open-source project · not affiliated with any institution</span>
+  </div>
+</footer>
+</body>
+</html>
