@@ -1,0 +1,6 @@
+name,type,ownership,city,state,aka,established_year,website,naac_grade,naac_cgpa,nirf_rank_overall,ugc_recognized,aicte_approved,nba_accredited,pay_scale_type
+"Indian Institute of Technology Bombay",iit,government,Mumbai,Maharashtra,IIT Bombay;IITB,1958,https://www.iitb.ac.in,,,3,,,,7th CPC
+"University of Delhi",central,government,New Delhi,Delhi,DU,1922,http://du.ac.in,A+,3.28,,true,,,UGC scale
+"National Institute of Technology Warangal",nit,government,Warangal,Telangana,NITW;NIT Warangal,1959,https://www.nitw.ac.in,,,45,true,true,true,7th CPC
+"St. Stephen's, Delhi",affiliated college,government_aided,New Delhi,Delhi,SSC,1881,,A,,,true,,,UGC scale
+"Vellore Institute of Technology",deemed,trust_society,Vellore,Tamil Nadu,VIT,1984,https://vit.ac.in,A++,,,true,true,,management

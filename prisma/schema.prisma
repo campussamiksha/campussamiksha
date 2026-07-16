@@ -1,0 +1,388 @@
+// CampusSamiksha — Prisma schema (mirrors db/schema.sql).
+// The raw SQL file additionally defines the materialized view and pg_trgm
+// indexes that Prisma cannot express; run it (or a migration) for those.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgcrypto, citext, pg_trgm]
+}
+
+// ---------- ENUMS ----------
+
+enum ReviewerCategory {
+  teaching_faculty
+  non_teaching_staff
+  research_scholar
+}
+
+enum EmploymentStatus {
+  current
+  former
+}
+
+enum EmploymentType {
+  permanent
+  tenure_track
+  contract
+  adhoc_guest
+  visiting
+  postdoc
+  phd_scholar
+  project_staff
+  other
+}
+
+enum InstitutionType {
+  central_university
+  state_university
+  deemed_university
+  private_university
+  institute_of_national_importance
+  autonomous_college
+  affiliated_college
+  research_institute
+  other
+}
+
+enum OwnershipType {
+  government
+  government_aided
+  private_unaided
+  autonomous
+  trust_society
+}
+
+enum ModerationStatus {
+  pending
+  published
+  rejected
+  flagged
+  removed
+}
+
+enum VerificationBadge {
+  unverified
+  email_verified
+  employment_verified
+}
+
+enum UserRole {
+  member
+  institution_rep
+  moderator
+  admin
+}
+
+enum UserStatus {
+  active
+  suspended
+  banned
+}
+
+enum ClaimStatus {
+  pending
+  approved
+  rejected
+}
+
+// ---------- MODELS ----------
+
+model User {
+  id              String            @id @default(uuid()) @db.Uuid
+  email           String            @unique
+  passwordHash    String?           @map("password_hash")
+  authProvider    String            @default("password") @map("auth_provider")
+  displayHandle   String?           @map("display_handle")
+  isEmailVerified Boolean           @default(false) @map("is_email_verified")
+  role            UserRole          @default(member)
+  status          UserStatus        @default(active)
+  maxBadge        VerificationBadge @default(unverified) @map("max_badge")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  reviews         Review[]
+  salaryReports   SalaryReport[]
+  interviewReviews InterviewReview[]
+  votes           ReviewVote[]
+  claims          InstitutionClaim[]
+  emailTokens     EmailVerificationToken[]
+
+  @@map("users")
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("email_verification_tokens")
+}
+
+model Institution {
+  id                 String           @id @default(uuid()) @db.Uuid
+  name               String
+  slug               String           @unique
+  aka                String[]
+  type               InstitutionType
+  ownership          OwnershipType?
+  parentInstitutionId String?         @map("parent_institution_id") @db.Uuid
+  parent             Institution?     @relation("InstitutionParent", fields: [parentInstitutionId], references: [id])
+  children           Institution[]    @relation("InstitutionParent")
+
+  establishedYear    Int?             @map("established_year") @db.SmallInt
+  city               String?
+  state              String?
+  country            String           @default("India")
+  pincode            String?
+  latitude           Decimal?         @db.Decimal(9, 6)
+  longitude          Decimal?         @db.Decimal(9, 6)
+  website            String?
+  logoUrl            String?          @map("logo_url")
+  description        String?
+
+  naacGrade          String?          @map("naac_grade")
+  naacCgpa           Decimal?         @map("naac_cgpa") @db.Decimal(3, 2)
+  nirfRankOverall    Int?             @map("nirf_rank_overall") @db.SmallInt
+  nbaAccredited      Boolean?         @map("nba_accredited")
+  ugcRecognized      Boolean?         @map("ugc_recognized")
+  aicteApproved      Boolean?         @map("aicte_approved")
+  payScaleType       String?          @map("pay_scale_type")
+
+  isClaimed          Boolean          @default(false) @map("is_claimed")
+  claimedByUserId    String?          @map("claimed_by_user_id") @db.Uuid
+
+  reviewCount        Int              @default(0) @map("review_count")
+  avgOverall         Decimal?         @map("avg_overall") @db.Decimal(3, 2)
+  recommendPct       Decimal?         @map("recommend_pct") @db.Decimal(5, 2)
+
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+
+  reviews            Review[]
+  salaryReports      SalaryReport[]
+  interviewReviews   InterviewReview[]
+  claims             InstitutionClaim[]
+
+  @@index([state])
+  @@index([type])
+  @@map("institutions")
+}
+
+model Department {
+  id      String   @id @default(uuid()) @db.Uuid
+  name    String   @unique
+  reviews Review[]
+
+  @@map("departments")
+}
+
+model RatingParameter {
+  id                   Int                @id @db.SmallInt
+  code                 String             @unique
+  label                String
+  description          String?
+  applicableCategories ReviewerCategory[] @map("applicable_categories")
+  isCore               Boolean            @default(true) @map("is_core")
+  displayOrder         Int                @default(0) @map("display_order") @db.SmallInt
+  isActive             Boolean            @default(true) @map("is_active")
+
+  scores               ReviewScore[]
+
+  @@map("rating_parameters")
+}
+
+model Review {
+  id                String            @id @default(uuid()) @db.Uuid
+  institutionId     String            @map("institution_id") @db.Uuid
+  institution       Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  userId            String?           @map("user_id") @db.Uuid
+  user              User?             @relation(fields: [userId], references: [id])
+
+  category          ReviewerCategory
+  empStatus         EmploymentStatus  @map("emp_status")
+  empType           EmploymentType    @map("emp_type")
+  designation       String?
+  department        String?
+  departmentId      String?           @map("department_id") @db.Uuid
+  departmentRef     Department?       @relation(fields: [departmentId], references: [id])
+  startYear         Int?              @map("start_year") @db.SmallInt
+  endYear           Int?              @map("end_year") @db.SmallInt
+
+  title             String
+  pros              String
+  cons              String
+  adviceToMgmt      String?           @map("advice_to_mgmt")
+  adviceToCandidate String?           @map("advice_to_candidate")
+  overallRating     Int               @map("overall_rating") @db.SmallInt
+  wouldRecommend    Boolean?          @map("would_recommend")
+
+  badge             VerificationBadge @default(unverified)
+  status            ModerationStatus  @default(pending)
+  helpfulCount      Int               @default(0) @map("helpful_count")
+  reportCount       Int               @default(0) @map("report_count")
+
+  moderatedBy       String?           @map("moderated_by") @db.Uuid
+  moderatedAt       DateTime?         @map("moderated_at")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  scores            ReviewScore[]
+  response          ReviewResponse?
+  votes             ReviewVote[]
+
+  @@unique([institutionId, userId], name: "uq_review_user_institution")
+  @@index([institutionId, status])
+  @@index([institutionId, category])
+  @@map("reviews")
+}
+
+model ReviewScore {
+  reviewId    String          @map("review_id") @db.Uuid
+  review      Review          @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  parameterId Int             @map("parameter_id") @db.SmallInt
+  parameter   RatingParameter @relation(fields: [parameterId], references: [id])
+  score       Int             @db.SmallInt
+
+  @@id([reviewId, parameterId])
+  @@map("review_scores")
+}
+
+model SalaryReport {
+  id              String            @id @default(uuid()) @db.Uuid
+  institutionId   String            @map("institution_id") @db.Uuid
+  institution     Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  userId          String?           @map("user_id") @db.Uuid
+  user            User?             @relation(fields: [userId], references: [id])
+  category        ReviewerCategory
+  empType         EmploymentType    @map("emp_type")
+  designation     String?
+  department      String?
+  yearsExperience Int?              @map("years_experience") @db.SmallInt
+  payScale        String?           @map("pay_scale")
+  grossMonthly    Decimal?          @map("gross_monthly") @db.Decimal(12, 2)
+  annualCtc       Decimal?          @map("annual_ctc") @db.Decimal(14, 2)
+  currency        String            @default("INR")
+  paidOnTime      Boolean?          @map("paid_on_time")
+  badge           VerificationBadge @default(unverified)
+  status          ModerationStatus  @default(pending)
+  createdAt       DateTime          @default(now()) @map("created_at")
+
+  @@index([institutionId, category])
+  @@map("salary_reports")
+}
+
+model InterviewReview {
+  id                 String           @id @default(uuid()) @db.Uuid
+  institutionId      String           @map("institution_id") @db.Uuid
+  institution        Institution      @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  userId             String?          @map("user_id") @db.Uuid
+  user               User?            @relation(fields: [userId], references: [id])
+  category           ReviewerCategory
+  positionApplied    String?          @map("position_applied")
+  department         String?
+  outcome            String?
+  offerAccepted      Boolean?         @map("offer_accepted")
+  difficulty         Int?             @db.SmallInt
+  processDescription String?          @map("process_description")
+  questionsAsked     String?          @map("questions_asked")
+  status             ModerationStatus @default(pending)
+  createdAt          DateTime         @default(now()) @map("created_at")
+
+  @@index([institutionId])
+  @@map("interview_reviews")
+}
+
+model InstitutionClaim {
+  id            String      @id @default(uuid()) @db.Uuid
+  institutionId String      @map("institution_id") @db.Uuid
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  userId        String      @map("user_id") @db.Uuid
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  officialEmail String      @map("official_email")
+  designation   String?
+  status        ClaimStatus @default(pending)
+  reviewedBy    String?     @map("reviewed_by") @db.Uuid
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  @@unique([institutionId, userId])
+  @@map("institution_claims")
+}
+
+model ReviewResponse {
+  id              String           @id @default(uuid()) @db.Uuid
+  reviewId        String           @unique @map("review_id") @db.Uuid
+  review          Review           @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  institutionId   String           @map("institution_id") @db.Uuid
+  responderUserId String?          @map("responder_user_id") @db.Uuid
+  body            String
+  status          ModerationStatus @default(pending)
+  createdAt       DateTime         @default(now()) @map("created_at")
+
+  @@map("review_responses")
+}
+
+model ReviewVote {
+  reviewId  String   @map("review_id") @db.Uuid
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isHelpful Boolean  @map("is_helpful")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([reviewId, userId])
+  @@map("review_votes")
+}
+
+model ContentReport {
+  id                String    @id @default(uuid()) @db.Uuid
+  // Polymorphic target — exactly one of these is set (enforced in app/DB).
+  reviewId          String?   @map("review_id") @db.Uuid
+  salaryReportId    String?   @map("salary_report_id") @db.Uuid
+  interviewReviewId String?   @map("interview_review_id") @db.Uuid
+  reporterUserId    String?   @map("reporter_user_id") @db.Uuid
+  reason            String
+  details           String?
+  resolved          Boolean   @default(false)
+  resolvedBy        String?   @map("resolved_by") @db.Uuid
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  @@index([resolved])
+  @@map("content_reports")
+}
+
+model VerificationDocument {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  institutionId String?   @map("institution_id") @db.Uuid
+  reviewId      String?   @map("review_id") @db.Uuid
+  docType       String    @map("doc_type")
+  storageRef    String?   @map("storage_ref")
+  status        String    @default("pending")
+  reviewedBy    String?   @map("reviewed_by") @db.Uuid
+  reviewedAt    DateTime? @map("reviewed_at")
+  expiresAt     DateTime  @map("expires_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@map("verification_documents")
+}
+
+model ModerationLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  actorUserId String?  @map("actor_user_id") @db.Uuid
+  action      String
+  targetType  String   @map("target_type")
+  targetId    String   @map("target_id") @db.Uuid
+  note        String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("moderation_log")
+}

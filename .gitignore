@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+build/
+.env
+.env*.local
+*.log
+.DS_Store
+coverage/
+next-env.d.ts
+
+# Private verification proofs — never commit uploaded documents
+private-uploads/
+
+# TypeScript build cache
+*.tsbuildinfo
