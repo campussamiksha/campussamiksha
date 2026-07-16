@@ -23,6 +23,34 @@ higher-ed + research focus and verified-employee trust signals.
 - **Next.js 14** (App Router, SSR) — SEO is the primary acquisition channel.
 - **TypeScript**, **PostgreSQL**, **Prisma**, **Zod**.
 
+## Deploy a live URL
+
+This is a server-rendered app with a database, so it needs a Node host — **not**
+GitHub Pages (which is static only). The quickest free path is **Vercel** + a
+free **Neon** Postgres:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/campussamiksha/campussamiksha&env=DATABASE_URL,SESSION_SECRET,APP_URL,MAIL_TRANSPORT)
+
+1. Create a Postgres at [neon.tech](https://neon.tech) (free) and copy its
+   connection string.
+2. Click **Deploy** above; when prompted set env vars:
+   - `DATABASE_URL` — the Neon connection string
+   - `SESSION_SECRET` — any long random string
+   - `APP_URL` — your deployment URL (e.g. `https://campussamiksha.vercel.app`)
+   - `MAIL_TRANSPORT` — `console` for now (switch to `smtp` + `SMTP_*` later)
+3. One-time database setup, run locally against the Neon URL:
+   ```bash
+   DATABASE_URL="<neon-url>" npx prisma db push
+   DATABASE_URL="<neon-url>" npx prisma db seed
+   # optional: load the AICTE directory
+   DATABASE_URL="<neon-url>" npx ts-node --compiler-options '{"module":"CommonJS"}' scripts/build-import-aicte.ts --import
+   ```
+
+> Note: verification-document uploads write to local disk (`private-uploads/`),
+> which is ephemeral on serverless hosts — wire object storage (S3/GCS) via
+> `VERIFICATION_UPLOAD_DIR`/a storage adapter before relying on that feature in
+> production. Everything else runs on Vercel as-is.
+
 ## Getting started
 
 ```bash
