@@ -14,3 +14,6 @@ private-uploads/
 
 # TypeScript build cache
 *.tsbuildinfo
+
+.vercel
+.env*

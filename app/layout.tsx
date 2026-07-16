@@ -34,6 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               Campus<b>Samiksha</b> <span className="deva">समीक्षा</span>
             </Link>
             <nav className="nav">
+              <Link href="/guide">Guide</Link>
               {isMod ? <Link href="/admin">Moderation</Link> : null}
               {user ? (
                 <>
@@ -59,6 +60,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div className="container">
             <span className="fbrand">CampusSamiksha</span>
             <span className="muted">© {LAUNCH_YEAR}</span>
+            <Link href="/guide">Guide</Link>
             <Link href="/terms">Terms</Link>
             <Link href="/privacy">Privacy</Link>
             <Link href="/guidelines">Content Guidelines</Link>
