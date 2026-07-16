@@ -31,6 +31,8 @@ export const RATING_PARAMETERS: RatingParameterDef[] = [
   { id: 5, code: "infrastructure", label: "Infrastructure & Facilities", description: "Labs, library, internet, campus, quarters", applicableCategories: ALL, isCore: true, displayOrder: 50 },
   { id: 6, code: "inclusion_safety", label: "Inclusion & Harassment Safety", description: "ICC functioning, gender/caste climate, safety", applicableCategories: ALL, isCore: true, displayOrder: 60 },
   { id: 7, code: "job_security", label: "Job Security", description: "Stability of employment / contract terms", applicableCategories: ALL, isCore: true, displayOrder: 70 },
+  { id: 8, code: "leave_time_off", label: "Leave & Time Off", description: "Maternity/paternity, casual & medical leave, vacations — how generous, and how freely granted", applicableCategories: ALL, isCore: true, displayOrder: 80 },
+  { id: 9, code: "benefits_welfare", label: "Benefits, Insurance & Welfare", description: "Health insurance, PF/gratuity, medical facilities, childcare and other welfare", applicableCategories: ALL, isCore: true, displayOrder: 90 },
 
   // Teaching faculty specific
   { id: 20, code: "teaching_workload", label: "Teaching Workload", description: "Contact hours, subjects, class sizes", applicableCategories: ["teaching_faculty"], isCore: true, displayOrder: 100 },

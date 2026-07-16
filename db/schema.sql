@@ -434,6 +434,10 @@ INSERT INTO rating_parameters (id, code, label, description, applicable_categori
         ARRAY['teaching_faculty','non_teaching_staff','research_scholar']::reviewer_category[], TRUE, 60),
  (7,  'job_security',         'Job Security',                  'Stability of employment / contract terms',
         ARRAY['teaching_faculty','non_teaching_staff','research_scholar']::reviewer_category[], TRUE, 70),
+ (8,  'leave_time_off',       'Leave & Time Off',              'Maternity/paternity, casual & medical leave, vacations — generosity and how freely granted',
+        ARRAY['teaching_faculty','non_teaching_staff','research_scholar']::reviewer_category[], TRUE, 80),
+ (9,  'benefits_welfare',     'Benefits, Insurance & Welfare', 'Health insurance, PF/gratuity, medical facilities, childcare and other welfare',
+        ARRAY['teaching_faculty','non_teaching_staff','research_scholar']::reviewer_category[], TRUE, 90),
 
  -- Teaching faculty specific ----------------------------------------------
  (20, 'teaching_workload',    'Teaching Workload',             'Contact hours, subjects, class sizes',

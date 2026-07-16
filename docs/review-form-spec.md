@@ -57,6 +57,8 @@ Parameters come from [`lib/ratingParameters.ts`](../lib/ratingParameters.ts)
 | Infrastructure & Facilities | Student Quality* | Role Clarity* | Publication & Conference Support |
 | Inclusion & Harassment Safety | | | Lab / Group Culture* |
 | Job Security | | | |
+| Leave & Time Off | | | |
+| Benefits, Insurance & Welfare | | | |
 
 \* optional (not part of the core composite).
 
