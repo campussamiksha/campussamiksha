@@ -102,6 +102,33 @@ export default function GuidePage() {
         person&rsquo;s name. Reviews that name individuals are edited or removed.
       </div>
 
+      <h3>What each rating covers</h3>
+      <p>
+        Worried your issue isn&rsquo;t listed? It almost certainly fits one of these. Everyone rates
+        the shared parameters below, plus a few specific to your role — and anything that isn&rsquo;t
+        a rating still belongs in <strong>Pros &amp; Cons</strong>.
+      </p>
+      <table>
+        <thead><tr><th>Rating</th><th>What it covers</th></tr></thead>
+        <tbody>
+          <tr><td>Compensation &amp; Benefits</td><td>Salary vs role, allowances (HRA/DA/TA), increments, arrears, bonuses</td></tr>
+          <tr><td>Salary / Stipend Punctuality</td><td>Pay on time and in full — delays, withheld dues, deductions</td></tr>
+          <tr><td>Leave &amp; Time Off</td><td>Maternity/paternity, casual &amp; medical leave, vacations — and how freely they&rsquo;re granted</td></tr>
+          <tr><td>Benefits, Insurance &amp; Welfare</td><td>Health insurance, PF/gratuity, medical reimbursement, childcare</td></tr>
+          <tr><td>Management &amp; Administration</td><td>Leadership fairness &amp; competence, politics, favouritism, red tape</td></tr>
+          <tr><td>Work–Life Balance</td><td>Hours, weekend/holiday duties, admin load, flexibility, attendance rules</td></tr>
+          <tr><td>Infrastructure &amp; Facilities</td><td>Labs, library, internet, classrooms, equipment, campus upkeep</td></tr>
+          <tr><td>Inclusion &amp; Harassment Safety</td><td>ICC functioning, gender &amp; caste climate, safety, grievance handling</td></tr>
+          <tr><td>Job Security</td><td>Permanent vs contract, renewal, regularisation, termination risk</td></tr>
+          <tr><td>For your role</td><td><strong>Faculty:</strong> teaching workload, research support, academic freedom, promotion, students. <strong>Staff:</strong> supervisor support, workload, growth, respect, role clarity. <strong>Scholars:</strong> guide quality, stipend, research facilities &amp; freedom, publication support, lab culture.</td></tr>
+        </tbody>
+      </table>
+      <div className="callout">
+        <b>Amenities checklist:</b> beyond ratings, you can confirm what&rsquo;s actually provided —
+        campus accommodation, health insurance, on-campus medical, childcare, transport, mess and
+        sports. Profiles show each as &ldquo;<em>available, reported by X of Y reviewers</em>.&rdquo;
+      </div>
+
       <h2 id="salary"><span className="idx">06</span>Share salary &amp; interview data</h2>
       <p>
         From an institution&rsquo;s page, use <strong>Share your salary</strong> or <strong>Share

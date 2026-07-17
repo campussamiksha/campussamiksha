@@ -224,6 +224,8 @@ model Review {
   adviceToCandidate String?           @map("advice_to_candidate")
   overallRating     Int               @map("overall_rating") @db.SmallInt
   wouldRecommend    Boolean?          @map("would_recommend")
+  // Factual amenity answers: { [code]: boolean }. See lib/amenities.ts.
+  amenities         Json?
 
   badge             VerificationBadge @default(unverified)
   status            ModerationStatus  @default(pending)

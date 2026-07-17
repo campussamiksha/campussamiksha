@@ -233,6 +233,7 @@ CREATE TABLE reviews (
     advice_to_candidate TEXT,
     overall_rating      SMALLINT NOT NULL CHECK (overall_rating BETWEEN 1 AND 5),
     would_recommend     BOOLEAN,
+    amenities           JSONB,          -- factual amenity answers: { code: bool }
 
     badge               verification_badge NOT NULL DEFAULT 'unverified',
     status              moderation_status NOT NULL DEFAULT 'pending',

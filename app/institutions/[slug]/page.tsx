@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { CATEGORY_LABELS, RATING_PARAMETERS, ReviewerCategory } from "@/lib/ratingParameters";
+import { AMENITIES } from "@/lib/amenities";
 import ReportButton from "@/components/ReportButton";
 import OfficialResponseForm from "@/components/OfficialResponseForm";
 
@@ -63,6 +64,20 @@ export default async function InstitutionPage({
 
   const avg = inst.avgOverall != null ? Number(inst.avgOverall) : null;
   const rec = inst.recommendPct != null ? Number(inst.recommendPct) : null;
+
+  // Aggregate factual amenity answers across published reviews.
+  const amenityAgg: Record<string, { yes: number; total: number }> = {};
+  for (const r of reviews) {
+    const a = r.amenities as Record<string, boolean> | null;
+    if (!a) continue;
+    for (const [code, val] of Object.entries(a)) {
+      if (typeof val !== "boolean") continue;
+      amenityAgg[code] ??= { yes: 0, total: 0 };
+      amenityAgg[code].total += 1;
+      if (val) amenityAgg[code].yes += 1;
+    }
+  }
+  const amenityRows = AMENITIES.filter((a) => amenityAgg[a.code]);
 
   return (
     <>
@@ -134,6 +149,25 @@ export default async function InstitutionPage({
           })}
         </div>
       ))}
+
+      {amenityRows.length > 0 && (
+        <div className="card score-block">
+          <h3>Facilities &amp; amenities <span className="field-hint" style={{ fontWeight: 400 }}>— as reported by reviewers</span></h3>
+          {amenityRows.map((a) => {
+            const { yes, total } = amenityAgg[a.code];
+            const pct = Math.round((yes / total) * 100);
+            return (
+              <div className="rating-row" key={a.code}>
+                <span className="rlabel">{a.label}</span>
+                <span className="rval">
+                  <span className="meter"><span style={{ width: `${pct}%` }} /></span>
+                  <span className="rnum" style={{ minWidth: 110, textAlign: "right" }}>{yes} of {total} available</span>
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="section-head"><h2>Reviews</h2><span className="eyebrow">{reviews.length} shown</span></div>
       {reviews.map((r) => (

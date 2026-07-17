@@ -7,6 +7,7 @@ import {
   parametersFor,
   ReviewerCategory,
 } from "@/lib/ratingParameters";
+import { AMENITIES } from "@/lib/amenities";
 
 const EMP_TYPES: Record<ReviewerCategory, [string, string][]> = {
   teaching_faculty: [
@@ -50,11 +51,15 @@ export default function ReviewForm({ slug }: { slug: string }) {
   const [overall, setOverall] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [amenities, setAmenities] = useState<Record<string, string>>({});
 
   const params = useMemo(() => parametersFor(category), [category]);
 
   function setScore(id: number, n: number) {
     setScores((s) => ({ ...s, [id]: n }));
+  }
+  function setAmenity(code: string, val: string) {
+    setAmenities((a) => ({ ...a, [code]: val }));
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -83,6 +88,11 @@ export default function ReviewForm({ slug }: { slug: string }) {
       overallRating: overall,
       wouldRecommend: fd.get("wouldRecommend") === "yes",
       scores: params.map((p) => ({ parameterId: p.id, score: scores[p.id] ?? null })).filter((s) => s.score),
+      amenities: Object.fromEntries(
+        Object.entries(amenities)
+          .filter(([, v]) => v === "yes" || v === "no")
+          .map(([k, v]) => [k, v === "yes"]),
+      ),
     };
 
     setSubmitting(true);
@@ -151,6 +161,10 @@ export default function ReviewForm({ slug }: { slug: string }) {
       </div>
 
       <label style={{ marginTop: 18 }}>Rate your experience</label>
+      <p className="field-hint" style={{ marginTop: 2 }}>
+        Not sure where your issue fits? Each rating shows what it covers — hover the note under it.
+        Anything specific that isn&rsquo;t a category here, spell out in Pros &amp; Cons below.
+      </p>
       <div className="rating-row">
         <strong>Overall</strong>
         <StarPicker value={overall} onChange={setOverall} />
@@ -163,6 +177,22 @@ export default function ReviewForm({ slug }: { slug: string }) {
             <div className="field-hint">{p.description}</div>
           </span>
           <StarPicker value={scores[p.id] ?? 0} onChange={(n) => setScore(p.id, n)} />
+        </div>
+      ))}
+
+      <label style={{ marginTop: 18 }}>Amenities <span className="field-hint">— what this employer actually provides (optional)</span></label>
+      {AMENITIES.map((a) => (
+        <div className="rating-row" key={a.code}>
+          <span>{a.label}</span>
+          <select
+            value={amenities[a.code] ?? ""}
+            onChange={(e) => setAmenity(a.code, e.target.value)}
+            style={{ width: "auto", minWidth: 150 }}
+          >
+            <option value="">— not sure —</option>
+            <option value="yes">Available</option>
+            <option value="no">Not available</option>
+          </select>
         </div>
       ))}
 

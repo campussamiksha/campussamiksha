@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { parametersFor, ReviewerCategory } from "@/lib/ratingParameters";
+import { AMENITY_CODES } from "@/lib/amenities";
 
 const scoreSchema = z.object({
   parameterId: z.number().int(),
@@ -29,6 +30,7 @@ const bodySchema = z.object({
   overallRating: z.number().int().min(1).max(5),
   wouldRecommend: z.boolean().nullish(),
   scores: z.array(scoreSchema).min(1),
+  amenities: z.record(z.string(), z.boolean()).nullish(),
 });
 
 // Lightweight guardrail: block obvious contact info / doxxing. Real moderation
@@ -80,6 +82,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "No valid ratings for this reviewer type." }, { status: 400 });
   }
 
+  // Keep only recognised amenity answers (null if none given).
+  let amenities: Record<string, boolean> | null = null;
+  if (b.amenities) {
+    const picked = Object.entries(b.amenities).filter(([k]) => AMENITY_CODES.has(k));
+    if (picked.length) amenities = Object.fromEntries(picked);
+  }
+
   const inst = await prisma.institution.findUnique({ where: { slug: b.slug }, select: { id: true } });
   if (!inst) return NextResponse.json({ error: "Institution not found" }, { status: 404 });
 
@@ -103,6 +112,7 @@ export async function POST(req: Request) {
         adviceToCandidate: b.adviceToCandidate ?? null,
         overallRating: b.overallRating,
         wouldRecommend: b.wouldRecommend ?? null,
+        amenities: amenities ?? undefined,
         status: "pending", // enters moderation queue
         scores: { create: scores.map((s) => ({ parameterId: s.parameterId, score: s.score })) },
       },

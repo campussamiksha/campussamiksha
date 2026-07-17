@@ -24,13 +24,13 @@ const ALL: ReviewerCategory[] = [
 
 export const RATING_PARAMETERS: RatingParameterDef[] = [
   // Shared across all three categories
-  { id: 1, code: "compensation", label: "Compensation & Benefits", description: "Pay, allowances, benefits relative to role", applicableCategories: ALL, isCore: true, displayOrder: 10 },
-  { id: 2, code: "salary_punctuality", label: "Salary / Stipend Punctuality", description: "Is pay released on time and in full", applicableCategories: ALL, isCore: true, displayOrder: 20 },
-  { id: 3, code: "management_quality", label: "Management & Administration", description: "Transparency, fairness, competence of leadership", applicableCategories: ALL, isCore: true, displayOrder: 30 },
-  { id: 4, code: "work_life_balance", label: "Work–Life Balance", description: "Hours, weekend/admin load, flexibility", applicableCategories: ALL, isCore: true, displayOrder: 40 },
-  { id: 5, code: "infrastructure", label: "Infrastructure & Facilities", description: "Labs, library, internet, campus, quarters", applicableCategories: ALL, isCore: true, displayOrder: 50 },
-  { id: 6, code: "inclusion_safety", label: "Inclusion & Harassment Safety", description: "ICC functioning, gender/caste climate, safety", applicableCategories: ALL, isCore: true, displayOrder: 60 },
-  { id: 7, code: "job_security", label: "Job Security", description: "Stability of employment / contract terms", applicableCategories: ALL, isCore: true, displayOrder: 70 },
+  { id: 1, code: "compensation", label: "Compensation & Benefits", description: "Salary vs role, allowances (HRA/DA/TA), increments, arrears, bonuses and overall pay fairness", applicableCategories: ALL, isCore: true, displayOrder: 10 },
+  { id: 2, code: "salary_punctuality", label: "Salary / Stipend Punctuality", description: "Whether pay arrives on time and in full — delays, withheld dues, deductions", applicableCategories: ALL, isCore: true, displayOrder: 20 },
+  { id: 3, code: "management_quality", label: "Management & Administration", description: "HoD/Dean/management fairness & competence, office politics, favouritism, transparency, red tape", applicableCategories: ALL, isCore: true, displayOrder: 30 },
+  { id: 4, code: "work_life_balance", label: "Work–Life Balance", description: "Working hours, weekend/holiday duties, admin & non-academic load, flexibility, remote/attendance rules", applicableCategories: ALL, isCore: true, displayOrder: 40 },
+  { id: 5, code: "infrastructure", label: "Infrastructure & Facilities", description: "Labs, library, internet, classrooms, equipment, power/water and campus upkeep (specific amenities are listed separately below)", applicableCategories: ALL, isCore: true, displayOrder: 50 },
+  { id: 6, code: "inclusion_safety", label: "Inclusion & Harassment Safety", description: "ICC/anti-harassment functioning, gender & caste climate, safety, discrimination and grievance handling", applicableCategories: ALL, isCore: true, displayOrder: 60 },
+  { id: 7, code: "job_security", label: "Job Security", description: "Permanent vs contract, renewal certainty, regularisation, risk of arbitrary termination", applicableCategories: ALL, isCore: true, displayOrder: 70 },
   { id: 8, code: "leave_time_off", label: "Leave & Time Off", description: "Maternity/paternity, casual & medical leave, vacations — how generous, and how freely granted", applicableCategories: ALL, isCore: true, displayOrder: 80 },
   { id: 9, code: "benefits_welfare", label: "Benefits, Insurance & Welfare", description: "Health insurance, PF/gratuity, medical facilities, childcare and other welfare", applicableCategories: ALL, isCore: true, displayOrder: 90 },
 
