@@ -48,11 +48,9 @@ export async function POST(req: Request) {
     console.error("verification email failed:", err);
   }
 
-  const res = NextResponse.json({
-    ok: true,
-    verified: false,
-    ...(process.env.NODE_ENV !== "production" ? { devVerifyUrl: verifyUrl } : {}),
-  });
+  // Return the verify link so the user can confirm immediately even before
+  // email delivery is configured. Once SMTP is set up this same link is emailed.
+  const res = NextResponse.json({ ok: true, verified: false, verifyUrl });
   res.cookies.set(SESSION_COOKIE, createSessionToken(user.id), {
     httpOnly: true,
     sameSite: "lax",

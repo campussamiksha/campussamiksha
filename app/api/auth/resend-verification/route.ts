@@ -27,8 +27,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Could not send email. Try again shortly." }, { status: 502 });
   }
 
-  return NextResponse.json({
-    ok: true,
-    ...(process.env.NODE_ENV !== "production" ? { devVerifyUrl: verifyUrl } : {}),
-  });
+  return NextResponse.json({ ok: true, verifyUrl });
 }

@@ -7,13 +7,13 @@ import Link from "next/link";
 export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [verifyUrl, setVerifyUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setNotice(null);
+    setVerifyUrl(null);
     const fd = new FormData(e.currentTarget);
     const payload = Object.fromEntries(fd.entries());
 
@@ -27,9 +27,8 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Something went wrong");
 
-      if (mode === "signup" && data.devVerifyUrl) {
-        // Dev convenience: surface the verification link instead of emailing it.
-        setNotice(`Account created. Verify your email to post reviews: ${data.devVerifyUrl}`);
+      if (mode === "signup" && data.verifyUrl) {
+        setVerifyUrl(data.verifyUrl);
         setBusy(false);
         return;
       }
@@ -39,6 +38,20 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
       setError(err instanceof Error ? err.message : "Error");
       setBusy(false);
     }
+  }
+
+  // After sign-up: confirm the account and let them verify right away.
+  if (verifyUrl) {
+    return (
+      <div className="card" style={{ maxWidth: 440, margin: "0 auto" }}>
+        <h1 style={{ marginTop: 0 }}>You&rsquo;re almost in ✓</h1>
+        <p className="muted">
+          Your account is created. Confirm your email to start posting reviews — we&rsquo;ve sent a
+          link to your inbox, or you can verify instantly here.
+        </p>
+        <a className="btn" href={verifyUrl}>Verify my email &amp; continue</a>
+      </div>
+    );
   }
 
   return (
@@ -60,12 +73,6 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
              placeholder={mode === "signup" ? "At least 8 characters" : ""} />
 
       {error ? <p className="small" style={{ color: "var(--bad)" }}>{error}</p> : null}
-      {notice ? (
-        <p className="small" style={{ color: "var(--good)", wordBreak: "break-all" }}>
-          {notice.split(": ")[0]}:{" "}
-          <Link href={notice.split(": ").slice(1).join(": ")}>click here to verify</Link>
-        </p>
-      ) : null}
 
       <button className="btn" type="submit" disabled={busy} style={{ marginTop: 12 }}>
         {busy ? "Please wait…" : mode === "login" ? "Log in" : "Sign up"}
