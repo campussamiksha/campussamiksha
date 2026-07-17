@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { searchInstitutions } from "@/lib/search";
+import { searchInstitutions, listStates } from "@/lib/search";
 
 export const dynamic = "force-dynamic";
 
@@ -8,14 +8,39 @@ function starRow(avg: number): string {
   const full = Math.round(avg);
   return "★".repeat(full) + "☆".repeat(5 - full);
 }
-
 const nf = (n: number) => n.toLocaleString("en-IN");
 
-export default async function HomePage({ searchParams }: { searchParams: { q?: string } }) {
-  const q = (searchParams.q ?? "").trim();
+const TYPES: [string, string][] = [
+  ["central_university", "Central University"],
+  ["state_university", "State University"],
+  ["deemed_university", "Deemed University"],
+  ["private_university", "Private University"],
+  ["institute_of_national_importance", "Institute of National Importance"],
+  ["autonomous_college", "Autonomous College"],
+  ["affiliated_college", "Affiliated College"],
+  ["research_institute", "Research Institute"],
+  ["other", "Other"],
+];
+const SORTS: [string, string][] = [
+  ["reviews", "Most reviewed"],
+  ["rating", "Highest rated"],
+  ["name", "A–Z"],
+];
 
-  const [institutions, instCount, reviewCount, stateRows] = await Promise.all([
-    searchInstitutions(q, 25),
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: { q?: string; state?: string; type?: string; sort?: string };
+}) {
+  const q = (searchParams.q ?? "").trim();
+  const state = searchParams.state ?? "";
+  const type = searchParams.type ?? "";
+  const sort = (searchParams.sort as "reviews" | "rating" | "name") || "reviews";
+  const filtered = !!(q || state || type);
+
+  const [institutions, states, instCount, reviewCount, stateRows] = await Promise.all([
+    searchInstitutions({ q, state, type, sort, take: 25 }),
+    listStates(),
     prisma.institution.count(),
     prisma.review.count({ where: { status: "published" } }),
     prisma.$queryRawUnsafe<{ c: bigint }[]>(`SELECT count(DISTINCT state) c FROM institutions WHERE state IS NOT NULL`),
@@ -33,6 +58,8 @@ export default async function HomePage({ searchParams }: { searchParams: { q?: s
         </p>
         <form className="search" action="/" method="get">
           <input name="q" defaultValue={q} placeholder="Search by name, city or state — try “IIT” or “Kerala”" aria-label="Search institutions" />
+          {state ? <input type="hidden" name="state" value={state} /> : null}
+          {type ? <input type="hidden" name="type" value={type} /> : null}
           <button className="btn" type="submit">Search</button>
         </form>
         <div className="hero-stats">
@@ -42,8 +69,26 @@ export default async function HomePage({ searchParams }: { searchParams: { q?: s
         </div>
       </section>
 
+      {/* Filters */}
+      <form className="filterbar" action="/" method="get">
+        {q ? <input type="hidden" name="q" value={q} /> : null}
+        <select name="state" defaultValue={state} aria-label="State">
+          <option value="">All states</option>
+          {states.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <select name="type" defaultValue={type} aria-label="Type">
+          <option value="">All types</option>
+          {TYPES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+        </select>
+        <select name="sort" defaultValue={sort} aria-label="Sort by">
+          {SORTS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+        </select>
+        <button className="btn secondary" type="submit">Apply</button>
+        {filtered ? <Link className="small muted" href="/" style={{ alignSelf: "center" }}>Clear</Link> : null}
+      </form>
+
       <div className="section-head">
-        <h2>{q ? `Results for “${q}”` : "Browse institutions"}</h2>
+        <h2>{q ? `Results for “${q}”` : filtered ? "Filtered institutions" : "Browse institutions"}</h2>
         <span className="eyebrow">{institutions.length} shown</span>
       </div>
 
@@ -75,7 +120,7 @@ export default async function HomePage({ searchParams }: { searchParams: { q?: s
       })}
 
       {institutions.length === 0 && (
-        <div className="card muted">No institutions match &ldquo;{q}&rdquo;. Try a name, city, or state.</div>
+        <div className="card muted">No institutions match your search. Try clearing filters or a different term.</div>
       )}
     </>
   );

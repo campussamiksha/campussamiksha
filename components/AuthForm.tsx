@@ -80,7 +80,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
       <p className="small muted" style={{ marginTop: 14 }}>
         {mode === "login" ? (
-          <>No account? <Link href="/signup">Sign up</Link></>
+          <>No account? <Link href="/signup">Sign up</Link> · <Link href="/forgot">Forgot password?</Link></>
         ) : (
           <>Already registered? <Link href="/login">Log in</Link></>
         )}

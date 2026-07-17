@@ -149,6 +149,12 @@ label { font-weight: 600; font-size: 14px; display: block; margin: 14px 0 6px; }
 .searchbar { display: flex; gap: 10px; }
 .searchbar input { flex: 1; }
 
+/* Filter bar */
+.filterbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 4px 0 6px; }
+.filterbar select { width: auto; min-width: 150px; padding: 9px 12px; }
+.filterbar .btn { padding: 9px 16px; }
+@media (max-width: 640px) { .filterbar select { flex: 1; min-width: 0; } }
+
 /* ---------- Section head ---------- */
 .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 4px 12px; }
 .section-head h2, .section-head h3 { margin: 0; font-size: 20px; }

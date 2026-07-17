@@ -65,6 +65,20 @@ export default async function InstitutionPage({
   const avg = inst.avgOverall != null ? Number(inst.avgOverall) : null;
   const rec = inst.recommendPct != null ? Number(inst.recommendPct) : null;
 
+  // Structured data for search engines (rich results).
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollegeOrUniversity",
+    name: inst.name,
+    ...(inst.city || inst.state
+      ? { address: { "@type": "PostalAddress", addressLocality: inst.city ?? undefined, addressRegion: inst.state ?? undefined, addressCountry: "IN" } }
+      : {}),
+    ...(inst.website ? { url: inst.website } : {}),
+    ...(avg != null && inst.reviewCount > 0
+      ? { aggregateRating: { "@type": "AggregateRating", ratingValue: avg.toFixed(1), reviewCount: inst.reviewCount, bestRating: 5, worstRating: 1 } }
+      : {}),
+  };
+
   // Aggregate factual amenity answers across published reviews.
   const amenityAgg: Record<string, { yes: number; total: number }> = {};
   for (const r of reviews) {
@@ -81,6 +95,7 @@ export default async function InstitutionPage({
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {searchParams.submitted ? (
         <div className="notice good">
           <strong>Thanks — your submission was received.</strong> It goes live once a moderator approves it.

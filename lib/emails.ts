@@ -23,6 +23,26 @@ export function verificationEmail(to: string, verifyUrl: string): Mail {
   return { to, subject, text, html };
 }
 
+export function passwordResetEmail(to: string, link: string): Mail {
+  const subject = `Reset your password · ${LEGAL.siteName}`;
+  const text =
+    `We received a request to reset your ${LEGAL.siteName} password.\n${link}\n\n` +
+    `This link expires in 30 minutes. If you didn't request it, you can safely ignore this email.`;
+  const html = `
+  <div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;max-width:520px;margin:0 auto;color:#1a1d23">
+    <h2 style="margin:0 0 8px">Reset your password</h2>
+    <p style="margin:0 0 16px">Click below to choose a new password for your ${LEGAL.siteName} account.</p>
+    <p style="margin:0 0 16px">
+      <a href="${link}" style="display:inline-block;background:#1e5eff;color:#fff;padding:11px 20px;border-radius:8px;text-decoration:none;font-weight:600">
+        Reset my password
+      </a>
+    </p>
+    <p style="color:#667085;font-size:13px;word-break:break-all">Or paste this link:<br>${link}</p>
+    <p style="color:#667085;font-size:13px">Expires in 30 minutes. If you didn't request this, ignore it.</p>
+  </div>`;
+  return { to, subject, text, html };
+}
+
 export function institutionalVerifyEmail(to: string, link: string, institutionName: string): Mail {
   const subject = `Confirm your ${institutionName} email · ${LEGAL.siteName}`;
   const text =
