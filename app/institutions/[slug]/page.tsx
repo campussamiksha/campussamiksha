@@ -117,6 +117,7 @@ export default async function InstitutionPage({
           </div>
           <div style={{ textAlign: "right", display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
             <Link className="btn" href={`/institutions/${inst.slug}/review`}>Write a review</Link>
+            <Link className="small muted" href={`/compare?i=${inst.slug}`}>Compare with others</Link>
             {inst.isClaimed ? (
               <span className="badge verified">Officially responds</span>
             ) : (
