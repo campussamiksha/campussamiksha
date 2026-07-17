@@ -6,6 +6,7 @@ import { hashPassword } from "@/lib/password";
 import { createSessionToken, SESSION_COOKIE, SESSION_MAX_AGE } from "@/lib/auth";
 import { sendMail } from "@/lib/mailer";
 import { verificationEmail } from "@/lib/emails";
+import { isDisposableEmail } from "@/lib/emailDomains";
 
 const schema = z.object({
   email: z.string().email().max(254),
@@ -19,6 +20,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: body.error.issues[0]?.message ?? "Invalid input" }, { status: 400 });
   }
   const email = body.data.email.toLowerCase();
+
+  if (isDisposableEmail(email)) {
+    return NextResponse.json({ error: "Please use a permanent email address." }, { status: 400 });
+  }
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
