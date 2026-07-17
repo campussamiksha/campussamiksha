@@ -11,18 +11,20 @@ export interface InstitutionRow {
   ugcRecognized: boolean | null;
   avgOverall: unknown;
   reviewCount: number;
+  nirfRankOverall: number | null;
 }
 
 export interface SearchOpts {
   q?: string;
   state?: string;
   type?: string;
-  sort?: "reviews" | "rating" | "name";
+  sort?: "reviews" | "rating" | "name" | "nirf";
   take?: number;
 }
 
 const COLS = `id, name, slug, city, state, type, ownership,
-  ugc_recognized AS "ugcRecognized", avg_overall AS "avgOverall", review_count AS "reviewCount"`;
+  ugc_recognized AS "ugcRecognized", avg_overall AS "avgOverall", review_count AS "reviewCount",
+  nirf_rank_overall AS "nirfRankOverall"`;
 
 /**
  * Institution search with optional filters. Matches name/city/state/aka
@@ -46,6 +48,7 @@ export async function searchInstitutions(opts: SearchOpts = {}): Promise<Institu
   const order =
     sort === "rating" ? "avg_overall DESC NULLS LAST, review_count DESC, name ASC"
       : sort === "name" ? "name ASC"
+      : sort === "nirf" ? "nirf_rank_overall ASC NULLS LAST, review_count DESC, name ASC"
       : "review_count DESC, avg_overall DESC NULLS LAST, name ASC";
 
   params.push(take);

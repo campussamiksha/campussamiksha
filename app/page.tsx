@@ -24,6 +24,7 @@ const TYPES: [string, string][] = [
 const SORTS: [string, string][] = [
   ["reviews", "Most reviewed"],
   ["rating", "Highest rated"],
+  ["nirf", "NIRF rank"],
   ["name", "A–Z"],
 ];
 
@@ -35,7 +36,7 @@ export default async function HomePage({
   const q = (searchParams.q ?? "").trim();
   const state = searchParams.state ?? "";
   const type = searchParams.type ?? "";
-  const sort = (searchParams.sort as "reviews" | "rating" | "name") || "reviews";
+  const sort = (searchParams.sort as "reviews" | "rating" | "name" | "nirf") || "reviews";
   const filtered = !!(q || state || type);
 
   const [institutions, states, instCount, reviewCount, stateRows] = await Promise.all([
@@ -101,6 +102,7 @@ export default async function HomePage({
               <div className="loc">{[inst.city, inst.state].filter(Boolean).join(", ") || "Location not listed"}</div>
               <div className="tags">
                 <span className="tag">{inst.type.replaceAll("_", " ")}</span>
+                {inst.nirfRankOverall ? <span className="tag">NIRF #{inst.nirfRankOverall}</span> : null}
                 {inst.ugcRecognized ? <span className="tag">UGC</span> : null}
               </div>
             </div>
